@@ -1,2 +1,2 @@
 # Templates-zabbix
-Alguns templates que construi 
+Alguns templates que construi no zabbix
