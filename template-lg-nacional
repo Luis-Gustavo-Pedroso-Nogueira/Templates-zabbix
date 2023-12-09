@@ -1,0 +1,37 @@
+zabbix_export:
+  version: '6.0'
+  date: '2023-12-09T20:08:22Z'
+  groups:
+    - uuid: 38a200f20faf4f39b493ed369499e37e
+      name: BGP
+  templates:
+    - uuid: 5f4f337ea50e43ec978e252b95b1972b
+      template: 'LG ALGAR TELECOM'
+      name: 'LG ALGAR TELECOM'
+      groups:
+        - name: BGP
+      items:
+        - uuid: 2906041094db4718a2679506e9007fe3
+          name: 'LG algar ping google'
+          type: SSH
+          key: 'ssh.run[<LG-ALGAR-ping>]'
+          delay: 8m
+          trends: '0'
+          value_type: TEXT
+          params: 'ping google.com wait 0'
+          username: rviews
+          password: rviews
+        - uuid: 80389fa6b8a14bbe83dc164104874f6f
+          name: 'LG algar Traceroutev6 google'
+          type: SSH
+          key: 'ssh.run[<LG-ALGAR>]'
+          delay: 8m
+          trends: '0'
+          value_type: TEXT
+          params: 'traceroute google.com'
+          username: rviews
+          password: rviews
+          preprocessing:
+            - type: LTRIM
+              parameters:
+                - ms
