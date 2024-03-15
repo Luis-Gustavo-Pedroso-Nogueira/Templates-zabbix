@@ -1,0 +1,53 @@
+zabbix_export:
+  version: '6.0'
+  date: '2024-02-24T02:45:25Z'
+  groups:
+    - uuid: aa2a1bea616046a9ab32cba64c044510
+      name: BGP
+  templates:
+    - uuid: 3ed39bc887e84ada9905203c4ae2c55c
+      template: 'BGP HUAWEI'
+      name: 'BGP HUAWEI'
+      groups:
+        - name: BGP
+      discovery_rules:
+        - uuid: b183b875720b43b8a8d6bb51e316d75c
+          name: 'Descoberta BGP'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#ASLOCAL},1.3.6.1.2.1.15.2,{#BGPID},1.3.6.1.2.1.15.3.1.1,{#BGPSTATE},1.3.6.1.2.1.15.3.1.2,{#BGPADMIN},1.3.6.1.2.1.15.3.1.3,{#BGPTIME},1.3.6.1.2.1.15.3.1.16,{#ASPEER},1.3.6.1.2.1.15.3.1.9]'
+          key: discovery.bgp
+          delay: 1d
+          item_prototypes:
+            - uuid: a4c0ecc8face4ed888d93cf49dfa3814
+              name: 'Status BGP AS{#ASPEER}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.15.3.1.2.{#SNMPINDEX}'
+              key: 'status.bgp[{#SNMPINDEX}]'
+              valuemap:
+                name: 'status BGP'
+              tags:
+                - tag: bgp-huawei
+                  value: status
+              trigger_prototypes:
+                - uuid: 2a91a07a9122422cb04477e7097d63c6
+                  expression: 'last(/BGP HUAWEI/status.bgp[{#SNMPINDEX}])<>6'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/BGP HUAWEI/status.bgp[{#SNMPINDEX}])=6'
+                  name: 'Sessão BGP AS{#ASPEER} DOWN'
+                  priority: DISASTER
+      valuemaps:
+        - uuid: 61c719c6f3c2445790d604d75644d6fa
+          name: 'status BGP'
+          mappings:
+            - value: '6'
+              newvalue: Established
+            - value: '5'
+              newvalue: Openconfirm
+            - value: '4'
+              newvalue: Opensent
+            - value: '3'
+              newvalue: active
+            - value: '2'
+              newvalue: Connect
+            - value: '1'
+              newvalue: idle
